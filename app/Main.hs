@@ -37,9 +37,8 @@ import System.IO
 import Control.Monad.Trans.Resource
 
 tableName = "haskell-perf-baseline"
-getMyItem :: Text -> IO (Maybe Text)
-getMyItem myid = do
-    env <- newEnv Sydney (FromEnv "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY")
+getMyItem :: Text -> Env -> IO (Maybe Text)
+getMyItem myid env = do
     runResourceT $ runAWS env $ do
         let attrValue = attributeValue & avS  .~ (Just myid)
         let req = (getItem tableName :: GetItem) & giKey .~ (HashMap.singleton "id" attrValue)
@@ -49,10 +48,11 @@ getMyItem myid = do
 
 main :: IO ()
 main = do
+  env <- newEnv Sydney (FromEnv "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY")
   scotty 3000 $ do
     get "/:id" $ do
-        --id <- param "id"
-        --result <- liftIO $ getMyItem id
+        id <- param "id"
+        result <- liftIO $ getMyItem id env
         case (Just "fine") of
           Just t -> html $ mconcat ["<h1>Scotty, ", fromStrict t, " me up!</h1>"]
           Nothing -> html "Not found"
