@@ -1,0 +1,14 @@
+flags: {}
+packages:
+- '.'
+- location: 
+    git: git@github.com:adbrowne/amazonka
+    commit: 12bb1f2b66911f542de09253ea3a0708eaf93301
+  extra-dep: true
+  subdirs:
+  - core
+  - amazonka
+  - amazonka-dynamodb
+  - amazonka-ec2
+extra-deps:
+resolver: nightly-2015-08-06
